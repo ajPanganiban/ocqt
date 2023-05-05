@@ -2,16 +2,38 @@
 
 ---
 
-**Octave-wise Constant Q Transform (OCQT)** is a transformation capable of representing a signal with respect to a dynamic choice of frequency resolutions per octave. OCQT generalizes the Constant Q Transform (CQT) through the concept of nonstationary Gabor frames by introducing geometrically spaced frequency bins while maintaining, on each octave, a constant ratio of central frequencies to bandwidth, called the Q-factor.
+This application is a revised approach of a previous study on audio morphing. For more details on the previous study, visit [Flucoma](https://www.flucoma.org/DAFX-2020/). 
+## Dependencies
+- Python 3.8 (numpy, matlab)
+- Matlab
+- Untwist
+- [LTFAT](https://ltfat.org/)
 
-### File structure
+## Implementation
+OCQT is run using the `filterbank` function from LTFAT.
+```
+% [S, Ss] = signal, sample rate
+fs = Ss/2;
+fmin = 100;
+bins = 24;
+fmax = Ss/2;
+t = [100 400 1600 6400 20000];
+dyn = 60;
 
-- 📁 **audio_files** - contains all audio samples used in the thesis as well as audio results from the applications.
-- 📁 **audio_morphing** - contains all source files, Python scripts, and Matlab files used for Chapter3 Application 2.
-- 📁 **helpers** - contains all helper functions.
-- 📁 **signal_masking** - contains Matlab scripts used for Chapter 3 Application 1.
+% Source Spectrogram
+figure(1)
+Sl = length(S);
+[Sg,Sa,Sfc] = cqtfilters(Ss, fmin, fmax, bins, Sl, 'fractional');
+Sc=filterbank(S,{'realdual',Sg},Sa);
+plotfilterbank(Sc,Sa,Sfc,Ss,dyn,'tick', t);
+```
+A helper function `try_cqtfilters` is provided in the helpers folder. This substitutes to the `cqtfilters` function from LTFAT.
+User must work on Python 3.8 and install the Matlab engine to access LTFAT functions in Python.
+The morphing script is run using the command
+`py -3.8 ocqt.py`
 
-A dedicated README is provided for the subfolders for the implementation details.
+## Results
+User may refer to the `ocqt_morph.m` and `stft_morph.m` files to access and view the morphing spectrograms. Corresponding audio results are found in the `audio_files` folder.
 
 ---
 This repository is a complementary work for a graduate thesis in Applied Mathematics - University of the Philippines, Diliman entitled *An Octave-wise Constant Q Transform via Nonstationary Gabor Frames and Some Applications*.
